@@ -1,82 +1,164 @@
-# PerformanceMetrics
+# Material Component Platform (MCP)
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+A comprehensive platform for enforcing Material Design 3 standards and best practices in Angular applications.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+## Overview
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+The Material Component Platform (MCP) is a toolset that helps enforce consistent standards across Angular applications using Material Design 3. It provides automated validation, standardization, and best practices enforcement for components, styles, and architecture.
 
-## Finish your CI setup
+## Features
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/g05FTAX95y)
+### Material Design 3 Standards
 
+- **Component Standards**
+  - Enforces Material Design 3 token usage
+  - Component naming conventions with `md3-` prefix
+  - Standardized component structure
+  - Style and template validation
 
-## Run tasks
+### Architecture Standards
 
-To run the dev server for your app, use:
+- **Modular Architecture**
+  - Enforces Nx workspace structure
+  - Dependency injection patterns
+  - State management using RxJS
 
-```sh
-npx nx serve performance-metrics
+### RxJS Standards
+
+- Enforces Observable patterns
+- Discourages direct Promise usage
+- Standardized WebSocket configurations
+- Required RxJS operator imports
+
+### Testing Standards
+
+- Coverage requirements:
+  - Statements: 80%
+  - Branches: 80%
+  - Functions: 80%
+  - Lines: 80%
+- Required test types:
+  - Unit tests (Jest)
+  - Integration tests
+  - E2E tests (Playwright)
+
+### Style Standards
+
+- BEM naming convention enforcement
+- Maximum nesting depth of 3 levels
+- Required structural elements
+- Material Design token usage
+- Custom property naming patterns
+
+## Configuration
+
+### Material Configuration
+
+```typescript
+material: {
+  version: 3,
+  enforceTokens: true,
+  components: {
+    enforceStandalone: false,
+    requireExplicitStandalone: true,
+    naming: {
+      prefix: 'md3-',
+      pattern: '^md3-[a-z-]+$'
+    }
+  }
+}
 ```
 
-To create a production bundle:
+### Theming Configuration
 
-```sh
-npx nx build performance-metrics
+```typescript
+theming: {
+  enforceCustomProperties: true,
+  namingPattern: '^(--md-sys-|--mat-)',
+  tokens: {
+    required: true,
+    categories: ['color', 'typography', 'elevation', 'motion']
+  }
+}
 ```
 
-To see all available targets to run for a project, run:
+## Usage
 
-```sh
-npx nx show project performance-metrics
+### Component Validation
+
+Components are automatically validated against the following criteria:
+
+1. Proper selector naming (`md3-` prefix)
+2. Material Design token usage
+3. Style structure and nesting
+4. Template structure
+5. BEM naming conventions
+
+### Style Validation
+
+Styles are checked for:
+
+- Proper token usage
+- Maximum nesting depth
+- BEM naming conventions
+- Required structural elements
+- Color token usage (no hex values)
+
+### Linting Configuration
+
+The platform includes pre-configured linting rules:
+
+```typescript
+linting: {
+  eslint: {
+    extends: [
+      'plugin:@nx/angular',
+      'plugin:@angular-eslint/template/process-inline-templates'
+    ],
+    rules: {
+      '@angular-eslint/prefer-standalone-component': 'off',
+      '@angular-eslint/no-standalone-false': 'off'
+    }
+  },
+  stylelint: {
+    extends: ['stylelint-config-standard-scss'],
+    rules: {
+      'selector-class-pattern': '^(md3-|mat-)',
+      'custom-property-pattern': '^(--md-sys-|--mat-)',
+      'color-no-hex': true,
+      'color-named': 'never'
+    }
+  }
+}
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+## CI/CD Integration
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+The platform includes GitHub Actions integration with required checks:
 
-## Add new projects
+- Build
+- Test
+- Lint
+- E2E Tests
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
+## Development
 
-Use the plugin's generator to create new projects.
+### Prerequisites
 
-To generate a new application, use:
+- Node.js
+- Angular CLI
+- Nx CLI
 
-```sh
-npx nx g @nx/angular:app demo
-```
+### Setup
 
-To generate a new library, use:
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Run validation: `nx run mcp:validate`
 
-```sh
-npx nx g @nx/angular:lib mylib
-```
+## Contributing
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+Please read our contributing guidelines before submitting pull requests.
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## License
 
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+This project is licensed under the MIT License - see the LICENSE file for details.

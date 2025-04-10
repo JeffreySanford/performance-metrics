@@ -1,0 +1,37 @@
+<div class="mcp-console-container">
+  <div class="mcp-console">
+    <div class="console-header">
+      <h2>MCP Server Console</h2>
+      <div class="connection-status" [class.connected]="isConnected">
+        {{ isConnected ? 'Connected' : 'Disconnected' }}
+      </div>
+      <button mat-icon-button (click)="clearConsole()" matTooltip="Clear console">
+        <mat-icon>clear_all</mat-icon>
+      </button>
+    </div>
+
+    <div class="console-output" #consoleOutput>
+      <div *ngFor="let message of consoleHistory" 
+           class="console-message" 
+           [class]="message.type">
+        <span class="timestamp">{{ message.timestamp | date:'HH:mm:ss' }}</span>
+        <span class="content" [class.pre-formatted]="message.type === 'output'">{{ message.message }}</span>
+      </div>
+    </div>
+
+    <div class="console-input">
+      <form (ngSubmit)="sendCommand()">
+        <mat-form-field appearance="outline" class="command-input">
+          <mat-label>Enter command</mat-label>
+          <input matInput
+                 [formControl]="commandInput"
+                 placeholder="Type a command and press Enter"
+                 autocomplete="off"
+                 spellcheck="false">
+        </mat-form-field>
+      </form>
+    </div>
+  </div>
+
+  <app-mcp-metrics></app-mcp-metrics>
+</div> 

@@ -1,0 +1,145 @@
+.metrics-dashboard {
+  padding: 16px;
+  background-color: #1e1e1e;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 16px;
+  margin: 0 auto;
+  max-width: 1600px;
+}
+
+.metric-card {
+  background-color: #2d2d2d;
+  border: 1px solid #3d3d3d;
+
+  ::ng-deep {
+    .mat-card-header {
+      padding: 16px 16px 0;
+      color: #e0e0e0;
+    }
+
+    .mat-card-title {
+      font-size: 1.1rem;
+      margin-bottom: 0;
+    }
+
+    .mat-card-content {
+      padding: 16px;
+    }
+  }
+}
+
+.chart {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+
+  &.gauge-chart {
+    height: 150px;
+  }
+
+  ::ng-deep {
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .line {
+      fill: none;
+      stroke: #2196f3;
+      stroke-width: 2;
+    }
+
+    .area {
+      &:nth-child(1) {
+        fill: #ef5350;
+        opacity: 0.7;
+      }
+      &:nth-child(2) {
+        fill: #66bb6a;
+        opacity: 0.7;
+      }
+    }
+
+    .gauge-background {
+      fill: #424242;
+    }
+
+    .gauge-foreground {
+      transition: all 0.3s ease;
+    }
+
+    .gauge-label {
+      fill: #e0e0e0;
+      font-size: 1.5rem;
+    }
+
+    .bar {
+      transition: all 0.3s ease;
+    }
+
+    .x-axis,
+    .y-axis {
+      .domain,
+      .tick line {
+        stroke: #666;
+      }
+
+      text {
+        fill: #888;
+        font-size: 0.8rem;
+      }
+    }
+  }
+}
+
+:host {
+  display: block;
+  padding: 20px;
+}
+
+mat-card {
+  max-width: 800px;
+  margin: auto;
+}
+
+.code-input-field {
+  width: 100%;
+}
+
+.spinner-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+  color: grey;
+}
+
+.results-container {
+  margin-top: 15px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+
+  mat-icon {
+    vertical-align: middle;
+    margin-right: 5px;
+  }
+}
+
+.updates-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 10px;
+  border: 1px dashed #ccc;
+  padding: 5px;
+  font-size: 0.9em;
+
+  .update-timestamp {
+    color: grey;
+    margin-right: 10px;
+  }
+} 

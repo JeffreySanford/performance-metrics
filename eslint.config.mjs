@@ -27,6 +27,8 @@ export default [
           ],
         },
       ],
+      "@angular-eslint/prefer-standalone-component": "off",
+      "@angular-eslint/no-standalone-false": "off"
     },
   },
   {

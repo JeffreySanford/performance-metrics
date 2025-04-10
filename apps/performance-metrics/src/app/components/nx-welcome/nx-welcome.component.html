@@ -1,0 +1,54 @@
+<div class="welcome-container">
+  <mat-card class="welcome-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h1>Welcome to {{ title }}! 🚀</h1>
+      </mat-card-title>
+      <mat-card-subtitle>
+        Your high-performance development platform
+      </mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="metrics-overview">
+        <div class="metric-item" *ngFor="let metric of metrics">
+          <h3>{{ metric.label }}</h3>
+          <div class="metric-value">{{ metric.value }}</div>
+          <mat-progress-bar
+            [mode]="'determinate'"
+            [value]="metric.progress"
+            [color]="metric.color">
+          </mat-progress-bar>
+        </div>
+      </div>
+
+      <mat-divider class="section-divider"></mat-divider>
+
+      <div class="features-grid">
+        <mat-card class="feature-card" *ngFor="let feature of features">
+          <mat-card-header>
+            <mat-icon [color]="feature.iconColor">{{ feature.icon }}</mat-icon>
+            <mat-card-title>{{ feature.title }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ feature.description }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-button [color]="feature.iconColor">Learn More</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <div class="chart-section">
+        <canvas #chartCanvas class="chart-container">
+          {{ chart?.update() }}
+        </canvas>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-raised-button color="primary">Get Started</button>
+      <button mat-button color="accent">Documentation</button>
+    </mat-card-actions>
+  </mat-card>
+</div> 

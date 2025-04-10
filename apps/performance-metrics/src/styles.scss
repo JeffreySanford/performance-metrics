@@ -1,33 +1,18 @@
+// Import a prebuilt Angular Material theme
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
 /**
- * Material Design 3 Main Stylesheet
- * 
- * This is the main entry point for all styles in the application.
- * Using modern Sass @use instead of deprecated @import
+ * Material Design Main Stylesheet
  */
 
-@use './styles/variables';
-@use './styles/reset';
-@use './styles/responsive';
-@use './styles/utilities';
-@use './styles/md3-components';
-@use './styles/material-overrides';
-
-// Global styles can be placed here if needed
-body {
-  font-family: var(--md-sys-typescale-body-medium-font-family);
-  font-size: var(--md-sys-typescale-body-medium-font-size);
-  line-height: var(--md-sys-typescale-body-medium-line-height);
-  font-weight: var(--md-sys-typescale-body-medium-font-weight);
-  letter-spacing: var(--md-sys-typescale-body-medium-letter-spacing);
-  color: var(--md-sys-color-on-background);
-  background-color: var(--md-sys-color-background);
+// Global styles
+html, body {
+  height: 100%;
   margin: 0;
-  padding: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  // Background and text colors will be handled by the prebuilt theme
 }
 
-// Apply the dark theme based on user preference
-@media (prefers-color-scheme: dark) {
-  body:not(.light-theme) {
-    @extend .dark-theme;
-  }
-}
+// Removed custom utility classes that depended on the custom theme
+// .text-gradient { ... }
+// .hover-elevation { ... }

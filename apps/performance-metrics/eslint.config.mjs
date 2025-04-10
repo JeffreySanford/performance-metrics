@@ -23,6 +23,9 @@ export default [
       rxjs: rxjsPlugin 
     },
     rules: {
+      "rxjs/finnish": "error",
+      "@angular-eslint/prefer-standalone-component": "off",
+      "@angular-eslint/no-standalone-false": "off",
       '@angular-eslint/directive-selector': [
         'error',
         {
@@ -38,8 +41,7 @@ export default [
           prefix: 'app',
           style: 'kebab-case',
         },
-      ],
-      "rxjs/finnish": "error", 
+      ]
     },
   },
   {

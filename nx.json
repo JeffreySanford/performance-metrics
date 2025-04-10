@@ -33,10 +33,7 @@
     },
     "lint-styles": {
       "cache": true,
-      "inputs": [
-        "default",
-        "{workspaceRoot}/.stylelintrc.json"
-      ]
+      "inputs": ["default", "{workspaceRoot}/.stylelintrc.json"]
     },
     "@nx/jest:jest": {
       "cache": true,
@@ -66,6 +63,16 @@
       "plugin": "@nx/eslint/plugin",
       "options": {
         "targetName": "lint"
+      }
+    },
+    {
+      "plugin": "@nx/webpack/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
       }
     }
   ],

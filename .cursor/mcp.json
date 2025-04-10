@@ -1,0 +1,106 @@
+{
+  "mcpServers": {
+    "nx-mcp": {
+      "url": "http://localhost:9876/sse"
+    }
+  },
+  "nx": {
+    "workspace": {
+      "name": "performance-metrics",
+      "root": ".",
+      "projectDefaults": {
+        "linter": "eslint",
+        "unitTestRunner": "jest",
+        "e2eTestRunner": "cypress"
+      }
+    },
+    "projects": {
+      "performance-metrics": {
+        "projectType": "application",
+        "root": "apps/performance-metrics",
+        "sourceRoot": "apps/performance-metrics/src",
+        "prefix": "app",
+        "targets": {
+          "build": {
+            "executor": "@angular-devkit/build-angular:browser",
+            "options": {
+              "outputPath": "dist/apps/performance-metrics",
+              "index": "apps/performance-metrics/src/index.html",
+              "main": "apps/performance-metrics/src/main.ts",
+              "polyfills": ["zone.js"],
+              "tsConfig": "apps/performance-metrics/tsconfig.app.json",
+              "assets": [
+                "apps/performance-metrics/src/favicon.ico",
+                "apps/performance-metrics/src/assets"
+              ],
+              "styles": [
+                "apps/performance-metrics/src/styles.scss"
+              ],
+              "scripts": []
+            },
+            "configurations": {
+              "production": {
+                "budgets": [
+                  {
+                    "type": "initial",
+                    "maximumWarning": "500kb",
+                    "maximumError": "1mb"
+                  },
+                  {
+                    "type": "anyComponentStyle",
+                    "maximumWarning": "2kb",
+                    "maximumError": "4kb"
+                  }
+                ],
+                "outputHashing": "all"
+              },
+              "development": {
+                "buildOptimizer": false,
+                "optimization": false,
+                "vendorChunk": true,
+                "extractLicenses": false,
+                "sourceMap": true,
+                "namedChunks": true
+              }
+            },
+            "defaultConfiguration": "production"
+          }
+        }
+      }
+    },
+    "standards": {
+      "material": {
+        "version": 3,
+        "prefix": "md3",
+        "tokens": {
+          "useCustomProperties": true,
+          "enforceNaming": true
+        },
+        "components": {
+          "enforceStandalone": false,
+          "requireExplicitStandalone": true
+        },
+        "theming": {
+          "useTokens": true,
+          "enforceHierarchy": true
+        }
+      },
+      "linting": {
+        "eslint": {
+          "extends": ["plugin:@nx/angular", "plugin:@angular-eslint/template/process-inline-templates"],
+          "rules": {
+            "@angular-eslint/prefer-standalone-component": "off",
+            "@angular-eslint/no-standalone-false": "off"
+          }
+        },
+        "stylelint": {
+          "extends": ["stylelint-config-standard-scss"],
+          "rules": {
+            "selector-class-pattern": "^(md3-|mat-)",
+            "custom-property-pattern": "^(--md-sys-|--mat-)"
+          }
+        }
+      }
+    }
+  }
+}
