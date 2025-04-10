@@ -85,6 +85,13 @@
         "staticFilePath": "dist/apps/performance-metrics/browser",
         "spa": true
       }
+    },
+    "lint-styles": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "stylelint \"{projectRoot}/src/**/*.scss\" --config .stylelintrc.json"
+      }
     }
   }
 }

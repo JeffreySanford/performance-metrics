@@ -1,0 +1,93 @@
+/* 
+ * Responsive utilities for Material Design 3 compliance
+ * Based on Material Design breakpoints and responsive behavior
+ */
+
+// Material Design 3 breakpoints
+$breakpoint-xs: 0;
+$breakpoint-sm: 600px;
+$breakpoint-md: 905px;
+$breakpoint-lg: 1240px;
+$breakpoint-xl: 1440px;
+
+// Container widths
+$container-sm: 540px;
+$container-md: 840px;
+$container-lg: 1080px;
+$container-xl: 1280px;
+
+// Media query mixins
+@mixin for-xs-only {
+  @media (max-width: #{$breakpoint-sm - 1}) {
+    @content;
+  }
+}
+
+@mixin for-sm-up {
+  @media (min-width: #{$breakpoint-sm}) {
+    @content;
+  }
+}
+
+@mixin for-sm-only {
+  @media (min-width: #{$breakpoint-sm}) and (max-width: #{$breakpoint-md - 1}) {
+    @content;
+  }
+}
+
+@mixin for-md-up {
+  @media (min-width: #{$breakpoint-md}) {
+    @content;
+  }
+}
+
+@mixin for-md-only {
+  @media (min-width: #{$breakpoint-md}) and (max-width: #{$breakpoint-lg - 1}) {
+    @content;
+  }
+}
+
+@mixin for-lg-up {
+  @media (min-width: #{$breakpoint-lg}) {
+    @content;
+  }
+}
+
+@mixin for-lg-only {
+  @media (min-width: #{$breakpoint-lg}) and (max-width: #{$breakpoint-xl - 1}) {
+    @content;
+  }
+}
+
+@mixin for-xl-up {
+  @media (min-width: #{$breakpoint-xl}) {
+    @content;
+  }
+}
+
+// Container utility class
+.container {
+  width: 100%;
+  padding-right: 16px;
+  padding-left: 16px;
+  margin-right: auto;
+  margin-left: auto;
+  
+  @include for-sm-up {
+    max-width: $container-sm;
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+  
+  @include for-md-up {
+    max-width: $container-md;
+  }
+  
+  @include for-lg-up {
+    max-width: $container-lg;
+  }
+  
+  @include for-xl-up {
+    max-width: $container-xl;
+  }
+}

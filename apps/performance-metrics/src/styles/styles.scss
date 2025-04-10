@@ -1,0 +1,12 @@
+/* 
+ * Main styles entry point
+ * Material Design 3 implementation
+ */
+
+// Import all partial styles in the correct order
+@import './variables';
+@import './reset';
+@import './responsive';
+@import './scrollbar';
+
+// Additional styles can be added below

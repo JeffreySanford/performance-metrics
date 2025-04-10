@@ -1,0 +1,59 @@
+{
+  "extends": [
+    "stylelint-config-standard-scss",
+    "stylelint-config-prettier-scss"
+  ],
+  "plugins": [
+    "stylelint-scss",
+    "stylelint-order",
+    "stylelint-declaration-strict-value"
+  ],
+  "rules": {
+    "order/properties-alphabetical-order": true,
+    "selector-class-pattern": "^md3-[a-z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*(__[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)?(--[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)?$|^[a-z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*$",
+    "scss/dollar-variable-pattern": "^[a-z][a-zA-Z0-9]+$",
+    "scss/at-import-partial-extension": null,
+    "property-no-vendor-prefix": null,
+    "value-no-vendor-prefix": null,
+    "color-function-notation": "legacy",
+    "alpha-value-notation": "number",
+    "selector-pseudo-element-no-unknown": [
+      true,
+      {
+        "ignorePseudoElements": ["ng-deep"]
+      }
+    ],
+    "declaration-empty-line-before": "never",
+    "custom-property-pattern": "^md-sys-|^[a-z][a-zA-Z0-9]*((-[a-z0-9]+)*)",
+    "scss/selector-no-redundant-nesting-selector": true,
+    "scale-unlimited/declaration-strict-value": [
+      ["/color/", "z-index", "font-size", "font-family"],
+      {
+        "ignoreValues": ["inherit", "transparent", "currentColor", "initial", "unset"],
+        "disableFix": true
+      }
+    ],
+    "no-descending-specificity": null,
+    "function-no-unknown": null,
+    "scss/function-no-unknown": true,
+    "scss/at-extend-no-missing-placeholder": null,
+    "property-disallowed-list": [
+      "font", 
+      "background", 
+      "animation", 
+      "border",
+      "margin",
+      "padding"
+    ],
+    "max-nesting-depth": 3,
+    "rule-empty-line-before": [
+      "always",
+      {
+        "except": ["first-nested"],
+        "ignore": ["after-comment"]
+      }
+    ],
+    "color-no-hex": true,
+    "color-named": "never"
+  }
+}

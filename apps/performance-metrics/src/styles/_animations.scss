@@ -1,0 +1,231 @@
+/* 
+ * Material Design 3 Animation System
+ * Based on MD3 motion specifications
+ */
+
+// MD3 Standard Easing
+$md3-standard-easing: cubic-bezier(0.2, 0, 0, 1);
+$md3-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+$md3-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+
+// MD3 Animation Durations
+$md3-duration-short1: 50ms;
+$md3-duration-short2: 100ms;
+$md3-duration-short3: 150ms;
+$md3-duration-short4: 200ms;
+$md3-duration-medium1: 250ms;
+$md3-duration-medium2: 300ms;
+$md3-duration-medium3: 350ms;
+$md3-duration-medium4: 400ms;
+$md3-duration-long1: 450ms;
+$md3-duration-long2: 500ms;
+$md3-duration-long3: 550ms;
+$md3-duration-long4: 600ms;
+$md3-duration-extra-long1: 700ms;
+$md3-duration-extra-long2: 800ms;
+$md3-duration-extra-long3: 900ms;
+$md3-duration-extra-long4: 1000ms;
+
+// Fade animations
+@keyframes md3FadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes md3FadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+// Scale animations
+@keyframes md3ScaleIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes md3ScaleOut {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+
+// Slide animations
+@keyframes md3SlideInBottom {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes md3SlideOutBottom {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+
+@keyframes md3SlideInRight {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes md3SlideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+}
+
+// Container transform (shared element transitions)
+@keyframes md3ContainerTransform {
+  from {
+    transform: scale(0.8);
+    border-radius: var(--md-sys-shape-corner-extra-large);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    border-radius: var(--md-sys-shape-corner-small);
+    opacity: 1;
+  }
+}
+
+// State change animations
+@keyframes md3Ripple {
+  from {
+    transform: scale(0);
+    opacity: 0.3;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+// Animation mixin
+@mixin md3-animation($name, $duration: $md3-duration-medium4, $easing: $md3-standard-easing) {
+  animation-name: $name;
+  animation-duration: $duration;
+  animation-timing-function: $easing;
+  animation-fill-mode: both;
+}
+
+// Common animation classes
+.md3-anim-fade-in {
+  @include md3-animation(md3FadeIn);
+}
+
+.md3-anim-fade-out {
+  @include md3-animation(md3FadeOut);
+}
+
+.md3-anim-scale-in {
+  @include md3-animation(md3ScaleIn);
+}
+
+.md3-anim-scale-out {
+  @include md3-animation(md3ScaleOut);
+}
+
+.md3-anim-slide-in-bottom {
+  @include md3-animation(md3SlideInBottom);
+}
+
+.md3-anim-slide-out-bottom {
+  @include md3-animation(md3SlideOutBottom);
+}
+
+.md3-anim-slide-in-right {
+  @include md3-animation(md3SlideInRight);
+}
+
+.md3-anim-slide-out-right {
+  @include md3-animation(md3SlideOutRight);
+}
+
+// State change transitions
+.md3-state-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.md3-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: currentColor;
+  transform-origin: center;
+  opacity: 0;
+  
+  &.active {
+    @include md3-animation(md3Ripple, $md3-duration-medium4, $md3-standard-decelerate);
+  }
+}
+
+// Transition helpers
+.md3-transition {
+  transition-property: transform, opacity, background-color, color, box-shadow;
+  transition-duration: $md3-duration-medium2;
+  transition-timing-function: $md3-standard-easing;
+}
+
+// Motion token exports as CSS custom properties
+:root {
+  --md-sys-motion-easing-standard: #{$md3-standard-easing};
+  --md-sys-motion-easing-standard-accelerate: #{$md3-standard-accelerate};
+  --md-sys-motion-easing-standard-decelerate: #{$md3-standard-decelerate};
+  
+  --md-sys-motion-duration-short1: #{$md3-duration-short1};
+  --md-sys-motion-duration-short2: #{$md3-duration-short2};
+  --md-sys-motion-duration-short3: #{$md3-duration-short3};
+  --md-sys-motion-duration-short4: #{$md3-duration-short4};
+  --md-sys-motion-duration-medium1: #{$md3-duration-medium1};
+  --md-sys-motion-duration-medium2: #{$md3-duration-medium2};
+  --md-sys-motion-duration-medium3: #{$md3-duration-medium3};
+  --md-sys-motion-duration-medium4: #{$md3-duration-medium4};
+  --md-sys-motion-duration-long1: #{$md3-duration-long1};
+  --md-sys-motion-duration-long2: #{$md3-duration-long2};
+  --md-sys-motion-duration-long3: #{$md3-duration-long3};
+  --md-sys-motion-duration-long4: #{$md3-duration-long4};
+}

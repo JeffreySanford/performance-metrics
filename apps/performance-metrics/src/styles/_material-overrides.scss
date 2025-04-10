@@ -1,0 +1,121 @@
+/* 
+ * Angular Material Overrides for MD3 Compliance
+ * Custom styles to make Angular Material more aligned with MD3 specifications
+ */
+
+// Button overrides
+.mat-mdc-button, 
+.mat-mdc-raised-button, 
+.mat-mdc-outlined-button,
+.mat-mdc-text-button,
+.mat-mdc-unelevated-button {
+  border-radius: var(--md-sys-shape-corner-medium) !important;
+  font-family: var(--md-sys-typescale-label-large-font-family) !important;
+  font-size: var(--md-sys-typescale-label-large-font-size) !important;
+  font-weight: var(--md-sys-typescale-label-large-font-weight) !important;
+  line-height: var(--md-sys-typescale-label-large-line-height) !important;
+  letter-spacing: var(--md-sys-typescale-label-large-letter-spacing) !important;
+  height: 40px !important;
+  min-width: 64px !important;
+  padding: 0 24px !important;
+  transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+  
+  .mat-mdc-button-touch-target {
+    height: 40px !important;
+  }
+}
+
+.mat-mdc-raised-button:not(:disabled) {
+  box-shadow: var(--md-sys-elevation-level1) !important;
+  
+  &:hover {
+    box-shadow: var(--md-sys-elevation-level2) !important;
+  }
+}
+
+// Form field overrides
+.mat-mdc-form-field {
+  .mat-mdc-text-field-wrapper {
+    border-radius: var(--md-sys-shape-corner-small) !important;
+    padding: 0 !important;
+    background-color: var(--md-sys-color-surface-variant) !important;
+  }
+  
+  .mat-mdc-floating-label {
+    font-family: var(--md-sys-typescale-body-large-font-family) !important;
+    font-size: var(--md-sys-typescale-body-large-font-size) !important;
+  }
+  
+  input.mat-mdc-input-element {
+    font-family: var(--md-sys-typescale-body-large-font-family) !important;
+    font-size: var(--md-sys-typescale-body-large-font-size) !important;
+    font-weight: var(--md-sys-typescale-body-large-font-weight) !important;
+    line-height: var(--md-sys-typescale-body-large-line-height) !important;
+    letter-spacing: var(--md-sys-typescale-body-large-letter-spacing) !important;
+    padding: 16px !important;
+  }
+}
+
+// Card overrides
+.mat-mdc-card {
+  border-radius: var(--md-sys-shape-corner-medium) !important;
+  box-shadow: var(--md-sys-elevation-level1) !important;
+  transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+  
+  &:hover {
+    box-shadow: var(--md-sys-elevation-level2) !important;
+  }
+}
+
+// Dialog overrides
+.mat-mdc-dialog-container {
+  .mdc-dialog__surface {
+    border-radius: var(--md-sys-shape-corner-large) !important;
+    box-shadow: var(--md-sys-elevation-level3) !important;
+  }
+}
+
+// Chips overrides
+.mat-mdc-chip {
+  border-radius: 8px !important;
+  height: 32px !important;
+  font-family: var(--md-sys-typescale-label-large-font-family) !important;
+  font-size: var(--md-sys-typescale-label-large-font-size) !important;
+  font-weight: var(--md-sys-typescale-label-large-font-weight) !important;
+}
+
+// Tab overrides
+.mat-mdc-tab-group {
+  .mat-mdc-tab-header {
+    border-bottom: none !important;
+  }
+  
+  .mat-mdc-tab-label {
+    font-family: var(--md-sys-typescale-title-small-font-family) !important;
+    font-size: var(--md-sys-typescale-title-small-font-size) !important;
+    font-weight: var(--md-sys-typescale-title-small-font-weight) !important;
+    letter-spacing: var(--md-sys-typescale-title-small-letter-spacing) !important;
+    min-width: 90px !important;
+    padding: 0 24px !important;
+    height: 48px !important;
+  }
+  
+  .mat-mdc-tab-label-active {
+    font-weight: 500 !important;
+  }
+}
+
+// Menu overrides
+.mat-mdc-menu-panel {
+  border-radius: var(--md-sys-shape-corner-medium) !important;
+  box-shadow: var(--md-sys-elevation-level2) !important;
+}
+
+// List overrides
+.mat-mdc-list-item {
+  font-family: var(--md-sys-typescale-body-large-font-family) !important;
+  font-size: var(--md-sys-typescale-body-large-font-size) !important;
+  font-weight: var(--md-sys-typescale-body-large-font-weight) !important;
+  line-height: var(--md-sys-typescale-body-large-line-height) !important;
+  letter-spacing: var(--md-sys-typescale-body-large-letter-spacing) !important;
+}

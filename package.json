@@ -2,7 +2,12 @@
   "name": "@performance-metrics/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "lint-styles": "stylelint \"**/*.scss\"",
+    "lint-styles:fix": "stylelint \"**/*.scss\" --fix",
+    "audit-styles": "node tools/style-audit.js",
+    "style-audit": "node tools/style-audit.js"
+  },
   "private": true,
   "dependencies": {
     "@angular/common": "~19.2.0",
@@ -56,6 +61,13 @@
     "ts-node": "10.9.1",
     "tslib": "^2.3.0",
     "typescript": "~5.7.2",
-    "typescript-eslint": "^8.19.0"
+    "typescript-eslint": "^8.19.0",
+    "stylelint": "^15.10.0",
+    "stylelint-config-prettier-scss": "^1.0.0",
+    "stylelint-config-standard-scss": "^11.0.0",
+    "stylelint-declaration-strict-value": "^1.9.2",
+    "stylelint-order": "^6.0.3",
+    "stylelint-scss": "^5.0.0",
+    "chalk": "^4.1.2"
   }
 }
