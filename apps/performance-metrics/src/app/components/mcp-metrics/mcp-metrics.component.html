@@ -1,95 +1,122 @@
-<div class="metrics-dashboard">
-  <div class="metrics-grid">
-    <mat-card class="metric-card">
-      <mat-card-header>
-        <mat-card-title>CPU Usage</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div #cpuChart class="chart"></div>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="metric-card">
-      <mat-card-header>
-        <mat-card-title>Memory Usage</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div #memoryChart class="chart"></div>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="metric-card">
-      <mat-card-header>
-        <mat-card-title>Token Usage</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div #tokenChart class="chart gauge-chart"></div>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="metric-card">
-      <mat-card-header>
-        <mat-card-title>Request Statistics</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div #requestsChart class="chart"></div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-</div>
-
-<mat-card>
+<!-- Performance Charts -->
+<mat-card class="chart-card">
   <mat-card-header>
-    <mat-card-title>MCP Workspace Standards Validator</mat-card-title>
-    <mat-card-subtitle>Enter component code to validate against standards</mat-card-subtitle>
+    <mat-card-title>Performance Metrics</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <mat-form-field appearance="fill" class="code-input-field">
-      <mat-label>Component Code</mat-label>
-      <textarea matInput 
-                [formControl]="codeToValidate" 
-                rows="10" 
-                placeholder="Paste your component code here..."></textarea>
-    </mat-form-field>
+    <!-- Tooltip Container -->
+    <div class="chart-tooltip"></div>
 
+    <div class="chart-container">
+      <h5>CPU Usage (%)</h5>
+      <div #cpuChart class="chart"></div>
+    </div>
+    <div class="chart-container">
+      <h5>Memory Usage (MB)</h5>
+      <div #memoryChart class="chart"></div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<!-- Live Updates -->
+<!-- ... rest of the template ... -->
+
+<mat-card class="validator-card">
+  <mat-card-header>
+    <mat-card-title>MCP Workspace Standards Validator</mat-card-title>
+    <mat-card-subtitle>Select component files or paste code manually</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <!-- Action Buttons -->
+    <div class="input-actions">
+      <button mat-stroked-button color="primary" (click)="triggerFileInput()">
+        <mat-icon>attach_file</mat-icon> Select Component Files (.ts, .html, .scss)
+      </button>
+      <input type="file" #fileInput hidden multiple (change)="handleFileSelect($event)" accept=".ts,.html,.scss">
+
+      <button mat-stroked-button (click)="showInputFields()" *ngIf="!areInputsVisible">
+        <mat-icon>keyboard</mat-icon> Paste Code Manually
+      </button>
+    </div>
+
+    <!-- Code Inputs (conditionally hidden) -->
+    <form [formGroup]="validationForm" class="validation-form">
+      <div class="code-inputs-container" *ngIf="areInputsVisible" [class.loading-inputs]="isLoading">
+        <!-- TypeScript Input -->
+        <mat-form-field appearance="outline" class="code-input-field ts-input">
+           <mat-label>TypeScript (.ts)</mat-label>
+           <textarea matInput
+                     formControlName="tsCode"
+                     rows="10"
+                     placeholder="Paste or select component TypeScript code..."></textarea>
+         </mat-form-field>
+
+        <!-- SCSS Input -->
+        <mat-form-field appearance="outline" class="code-input-field scss-input">
+          <mat-label>SCSS (.scss)</mat-label>
+          <textarea matInput
+                    formControlName="scssCode"
+                    rows="10"
+                    placeholder="Paste or select component SCSS code..."></textarea>
+        </mat-form-field>
+
+        <!-- HTML Input -->
+        <mat-form-field appearance="outline" class="code-input-field html-input">
+          <mat-label>HTML (.html)</mat-label>
+          <textarea matInput
+                    formControlName="htmlCode"
+                    rows="10"
+                    placeholder="Paste or select component HTML template..."></textarea>
+        </mat-form-field>
+      </div>
+      <div *ngIf="!areInputsVisible" class="input-placeholder">
+        <p>Select component files (.ts, .html, .scss) or choose to paste code manually.</p>
+      </div>
+    </form>
+
+    <!-- Loading Spinner -->
     <div *ngIf="isLoading" class="spinner-container">
-      <mat-spinner diameter="30"></mat-spinner>
+      <mat-spinner diameter="40"></mat-spinner>
       <span>Validating...</span>
     </div>
 
-    <div *ngIf="validationResult" class="results-container">
-      <h3>Validation Results:</h3>
-      <div *ngIf="validationResult.isValid; else violationsList">
-        <mat-icon color="primary">check_circle</mat-icon> Code is valid.
+    <!-- Validation Results -->
+    <div *ngIf="validationResult && !isLoading" class="results-container">
+      <h4>Validation Result</h4>
+      <div *ngIf="validationResult?.isValid; else violationsTpl" class="valid">
+        <mat-icon>check_circle</mat-icon>
+        <span>Component adheres to standards.</span>
       </div>
-      <ng-template #violationsList>
-        <mat-icon color="warn">error</mat-icon> Violations found:
-        <mat-list>
-          <mat-list-item *ngFor="let violation of validationResult.violations">
-            {{ violation }}
-          </mat-list-item>
-        </mat-list>
+      <ng-template #violationsTpl>
+        <div class="violations">
+          <p>
+            <mat-icon>warning</mat-icon>
+            <span>Component has violations:</span>
+          </p>
+          <mat-list>
+            <mat-list-item *ngFor="let violation of validationResult?.violations">
+              {{ violation }}
+            </mat-list-item>
+          </mat-list>
+        </div>
       </ng-template>
     </div>
 
-    <mat-divider></mat-divider>
-
-    <h3>Live Updates:</h3>
-    <mat-list dense class="updates-list">
-      <mat-list-item *ngFor="let update of updates">
-        <span class="update-timestamp">[{{ update.timestamp | date:'mediumTime' }}]</span> 
-        <span class="update-type">Type: {{ update.type }}</span>
-        <!-- Add more details based on update structure -->
-      </mat-list-item>
-       <mat-list-item *ngIf="updates.length === 0">
-        No updates received yet.
-       </mat-list-item>
-    </mat-list>
+    <!-- Live Updates List -->
+    <div *ngIf="updates().length > 0" class="updates-list">
+      <h4>Live Updates</h4>
+      <mat-list>
+        <mat-list-item *ngFor="let update of updates(); let i = index">
+          <pre>{{ update | json }}</pre>
+        </mat-list-item>
+      </mat-list>
+    </div>
 
   </mat-card-content>
   <mat-card-actions align="end">
-    <button mat-raised-button color="primary" (click)="validateComponentCode()" [disabled]="!codeToValidate.value || isLoading">
-      Validate Code
+    <button mat-raised-button color="primary" (click)="validateComponentCode()" [disabled]="!areInputsVisible || !validationForm.valid || isLoading">
+       <mat-icon>verified_user</mat-icon>
+      <span>Validate Code</span>
     </button>
   </mat-card-actions>
-</mat-card> 
+</mat-card>

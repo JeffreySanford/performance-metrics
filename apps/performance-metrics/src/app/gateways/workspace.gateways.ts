@@ -19,6 +19,7 @@ interface ValidationResult {
   },
 })
 export class WorkspaceGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  // Instantiate Logger directly
   private readonly logger = new Logger(WorkspaceGateway.name);
 
   @WebSocketServer()
@@ -31,6 +32,7 @@ export class WorkspaceGateway implements OnGatewayConnection, OnGatewayDisconnec
     share()
   );
 
+  // Logger removed from constructor
   constructor(private readonly standards: WorkspaceStandardsConfig) {}
 
   handleConnection(client: Socket): void {
@@ -61,6 +63,7 @@ export class WorkspaceGateway implements OnGatewayConnection, OnGatewayDisconnec
 
   @SubscribeMessage('validateComponent')
   onValidateComponent(client: Socket, payload: { ts: string; scss: string; html: string }): void {
+    // Note: this.standards.validateComponent needs updating for the new payload
     this.standards.validateComponent(payload).pipe(
       takeUntil(this.disconnectSubject),
       tap((result: ValidationResult) => {
@@ -70,9 +73,9 @@ export class WorkspaceGateway implements OnGatewayConnection, OnGatewayDisconnec
     ).subscribe({
         error: (err) => {
             this.logger.error(`Validation failed for client ${client.id}:`, err);
-            client.emit('validationError', { 
+            client.emit('validationError', {
                 message: 'Validation process failed on the server.',
-                error: err.message || 'Unknown error' 
+                error: err.message || 'Unknown error'
             });
         }
     });
@@ -88,6 +91,7 @@ export class WorkspaceGateway implements OnGatewayConnection, OnGatewayDisconnec
     return this.standards.getStandards();
   }
 
+  // Method to push updates to all connected clients (used by MetricsService)
   pushUpdate(update: any): void {
     this.workspaceUpdates.next(update);
   }
