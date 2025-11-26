@@ -41,7 +41,7 @@
 
       <div class="chart-section">
         <canvas #chartCanvas class="chart-container">
-          {{ chart?.update() }}
+          <!-- Remove the inline update call that's causing the error -->
         </canvas>
       </div>
     </mat-card-content>
@@ -51,4 +51,4 @@
       <button mat-button color="accent">Documentation</button>
     </mat-card-actions>
   </mat-card>
-</div> 
+</div>

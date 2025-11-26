@@ -67,12 +67,15 @@ export class McpConsoleComponent implements OnInit, OnDestroy {
     });
 
     this.socket.on('message', (response: any) => {
+      // Handle regular messages
       this.addMessage('output', JSON.stringify(response, null, 2));
     });
 
     this.socket.on('error', (error: any) => {
       this.addMessage('error', error.message || 'An error occurred');
     });
+    
+    // Note: Health status updates are now handled in the metrics component
   }
 
   sendCommand(): void {
@@ -103,4 +106,4 @@ export class McpConsoleComponent implements OnInit, OnDestroy {
   clearConsole(): void {
     this.consoleHistory = [];
   }
-} 
+}

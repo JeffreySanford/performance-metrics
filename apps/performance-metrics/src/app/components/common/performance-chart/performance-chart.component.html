@@ -1,0 +1,35 @@
+<div class="performance-chart-container">
+  <div class="chart-header">
+    <h3>{{ title }}</h3>
+    <div class="chart-controls" *ngIf="brushEnabled">
+      <button mat-icon-button matTooltip="Reset Zoom" (click)="refresh()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+  
+  <div #chartContainer class="chart-container"></div>
+  
+  <!-- Health Info Card -->
+  <mat-card class="health-info-card" *ngIf="isInfoCardVisible"
+            [style.top.px]="infoCardPosition.y - 70"
+            [style.left.px]="infoCardPosition.x + 15">
+    <mat-card-header>
+      <div mat-card-avatar>
+        <mat-icon [style.color]="getHealthColor()">favorite</mat-icon>
+      </div>
+      <mat-card-title>System Health: {{ healthStatus?.status }}</mat-card-title>
+      <mat-card-subtitle>
+        {{ healthStatus?.timestamp | date:'MMM d, y h:mm:ss a' }}
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>{{ getHealthDescription() }}</p>
+    </mat-card-content>
+  </mat-card>
+  
+  <!-- Fallback message when no chart data is available -->
+  <div class="no-data-message" *ngIf="!series || series.length === 0">
+    No chart data available.
+  </div>
+</div>

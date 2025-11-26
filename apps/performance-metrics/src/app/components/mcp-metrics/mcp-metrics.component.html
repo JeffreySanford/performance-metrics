@@ -4,163 +4,234 @@
     <mat-card-title>
       <div class="header-content">
         <span class="title-text">Performance Metrics Dashboard</span>
-        <div class="connection-status" [class.connected]="isConnected">
-          <div class="status-indicator"></div>
-          <span>{{ isConnected ? 'Connected' : 'Disconnected' }}</span>
-        </div>
       </div>
     </mat-card-title>
   </mat-card-header>
   
   <mat-card-content>
-    <!-- Tooltip Container -->
-    <div class="chart-tooltip"></div>
+    <!-- Controls Row -->
+    <div class="controls-row">
+      <!-- Update Frequency Control -->
+      <div class="update-frequency-control">
+        <label for="frequencySlider">Update Frequency:</label>
+        <div class="slider-container">
+          <mat-slider
+            id="frequencySlider"
+            [min]="10" 
+            [max]="3000"
+            step="100"
+            [value]="1000"
+            (input)="updateFrequency($event)"
+            class="frequency-slider"
+            color="accent">
+            <input matSliderThumb>
+          </mat-slider>
+          <div class="slider-labels">
+            <span>10ms</span>
+            <span>3s</span>
+          </div>
+        </div>
+        <div class="frequency-value">1000ms</div>
+      </div>
+      
+      <!-- Connection Status with more detailed state -->
+      <div class="connection-status" 
+           [class.connected]="isConnected"
+           [class.active]="isConnected && lastHeartbeat?.status === 'healthy'"
+           matTooltip="Server Connection Status - Click to attempt reconnect"
+           [matTooltipClass]="'server-stats-tooltip'"
+           (click)="websocketService.connect()"
+           (keydown.enter)="websocketService.connect()"
+           tabindex="0"
+           role="button"
+           aria-label="Connection status indicator, press Enter to reconnect"
+           (mouseenter)="showServerStats($event)">
+        <div class="status-indicator"></div>
+        <span>{{ getConnectionStatusText() }}</span>
+      </div>
+
+      <!-- Data Source Toggle - Update the text to emphasize what will change -->
+      <div class="data-source-toggle">
+        <div 
+          class="toggle-switch" 
+          [class.live]="isLiveData" 
+          (click)="toggleDataSource()"
+          (keydown.enter)="toggleDataSource()"
+          tabindex="0"
+          role="switch"
+          [attr.aria-checked]="isLiveData"
+          aria-label="Toggle between live and mock data">
+          <div class="switch-label">{{ isLiveData ? 'LIVE' : 'MOCK' }}</div>
+          <div class="switch-handle"></div>
+        </div>
+        <!-- Add optional helper text to clarify the current state -->
+        <div class="toggle-helper-text" *ngIf="!isLiveData">Using simulated data</div>
+      </div>
+      
+      <!-- Add diagnostics toggle button to the controls row -->
+      <button mat-icon-button 
+              class="diagnostics-toggle" 
+              [class.active]="diagnosticsEnabled"
+              (click)="toggleDiagnostics()" 
+              matTooltip="Toggle diagnostics mode">
+        <mat-icon>memory</mat-icon>
+      </button>
+    </div>
     
     <!-- System Info Card -->
     <div class="system-info-card" [innerHTML]="getSystemInfoTemplate()"></div>
     
-    <!-- Summary Metrics -->
-    <div class="metrics-summary">
-      <div class="metric-card cpu">
-        <div class="metric-icon">
-          <mat-icon>memory</mat-icon>
+    <!-- Main Content Row: Chart + Metrics -->
+    <div class="metrics-content-row">
+      <!-- Left: Performance Chart -->
+      <div class="chart-column">
+        <h2>System Performance Metrics</h2>
+        
+        <!-- Metric Filters -->
+        <div class="metrics-filter">
+          <div class="filter-chips">
+            <mat-chip-option 
+              *ngFor="let filter of metricFilters" 
+              [selected]="filter.active"
+              [color]="filter.active ? 'accent' : undefined"
+              (click)="$event.stopPropagation()"
+              (selectionChange)="handleFilterSelection(filter.id, $event.selected)">
+              <span class="metric-indicator" [style.backgroundColor]="filter.color"></span>
+              {{ filter.name }}
+            </mat-chip-option>
+          </div>
         </div>
-        <div class="metric-data">
-          <div class="metric-value">{{ currentCpuUsage | number:'1.0-0' }}%</div>
-          <div class="metric-label">CPU Usage</div>
-        </div>
-        <div class="metric-gauge">
-          <svg viewBox="0 0 120 120" class="gauge-svg">
-            <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
-            <circle class="gauge-fill" cx="60" cy="60" r="50" 
-                    [style.stroke-dasharray]="getCpuDashArray()"></circle>
-            <text class="gauge-text" x="60" y="65" text-anchor="middle">{{ currentCpuUsage | number:'1.0-0' }}%</text>
-          </svg>
-        </div>
-      </div>
-      
-      <div class="metric-card memory">
-        <div class="metric-icon">
-          <mat-icon>sd_card</mat-icon>
-        </div>
-        <div class="metric-data">
-          <div class="metric-value">{{ currentMemoryUsed | number:'1.0-0' }} MB</div>
-          <div class="metric-label">Memory Usage</div>
-          <div class="metric-secondary">of {{ totalMemory | number:'1.0-0' }} MB</div>
-        </div>
-        <div class="metric-gauge">
-          <svg viewBox="0 0 120 120" class="gauge-svg">
-            <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
-            <circle class="gauge-fill" cx="60" cy="60" r="50" 
-                    [style.stroke-dasharray]="getMemoryDashArray()"></circle>
-            <text class="gauge-text" x="60" y="65" text-anchor="middle">{{ memoryPercentage | number:'1.0-0' }}%</text>
-          </svg>
+        
+        <!-- Performance Chart -->
+        <div class="unified-chart-container">
+          <app-performance-chart
+            [series]="performanceChartSeries"
+            [width]="800" 
+            [height]="350"
+            [title]="'System Performance'"
+            [yAxisLabel]="'Value'"
+            [healthStatus]="healthStatus"
+            [showLegend]="true"
+            (seriesToggled)="handleSeriesToggle($event)">
+          </app-performance-chart>
         </div>
       </div>
       
-      <div class="metric-card response">
-        <div class="metric-icon">
-          <mat-icon>speed</mat-icon>
-        </div>
-        <div class="metric-data">
-          <div class="metric-value">{{ avgResponseTime | number:'1.0-2' }} ms</div>
-          <div class="metric-label">Avg Response</div>
-        </div>
-        <div class="sparkline" #responseSparkline></div>
-      </div>
-      
-      <div class="metric-card requests">
-        <div class="metric-icon">
-          <mat-icon>trending_up</mat-icon>
-        </div>
-        <div class="metric-data">
-          <div class="metric-value">{{ requestsPerSecond }}</div>
-          <div class="metric-label">Req/Sec</div>
-        </div>
-        <div class="sparkline" #requestsSparkline></div>
-      </div>
-    </div>
-    
-    <!-- Combined Chart -->
-    <div class="chart-wrapper combined-chart-container">
-      <div class="chart-header">
-        <h3>Combined Metrics</h3>
-        <div class="chart-controls">
-          <button mat-icon-button matTooltip="Reset View">
-            <mat-icon>zoom_out_map</mat-icon>
-          </button>
-        </div>
-      </div>
-      <div #combinedChart class="chart combined-chart"></div>
-      
-      <!-- Metric Filters -->
-      <div class="metrics-filter">
-        <div class="filter-chips">
-          <mat-chip-option 
-            *ngFor="let filter of metricFilters" 
-            [selected]="filter.active"
-            [color]="filter.active ? 'primary' : undefined"
-            (selectionChange)="toggleMetricFilter(filter.id)">
-            <span class="metric-indicator" [style.backgroundColor]="filter.color"></span>
-            {{ filter.name }}
-          </mat-chip-option>
+      <!-- Right: Detailed Metrics -->
+      <div class="metrics-column">
+        <h2>System Metrics</h2>
+        <div class="metrics-grid">
+          <div class="metric-tile" 
+               *ngFor="let metric of detailedMetrics"
+               [class.updating]="isTileUpdating(metric.id)">
+            <div class="metric-name">{{ metric.name }}</div>
+            <div class="metric-value" [ngClass]="getMetricStatusClass(metric)">
+              {{ metric.value }} {{ metric.unit }}
+            </div>
+            <div class="metric-trend" [ngClass]="metric.trend">
+              <mat-icon>{{ getTrendIcon(metric.trend) }}</mat-icon>
+              <span>{{ metric.changePercent | number:'1.1-1' }}%</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     
-    <!-- Main Charts -->
-    <div class="charts-container">
-      <div class="chart-wrapper">
-        <div class="chart-header">
-          <h3>CPU Usage Over Time</h3>
-          <div class="chart-controls">
-            <button mat-icon-button (click)="toggleChartType('cpu')" matTooltip="Change Chart Type">
-              <mat-icon>bar_chart</mat-icon>
-            </button>
-            <button mat-icon-button (click)="resetZoom('cpu')" matTooltip="Reset Zoom">
-              <mat-icon>zoom_out_map</mat-icon>
-            </button>
-          </div>
-        </div>
-        <div #cpuChart class="chart"></div>
+    <!-- Add diagnostics panel at the bottom of the card -->
+    <div *ngIf="diagnosticsEnabled" class="diagnostics-panel">
+      <div class="diagnostics-header">
+        <h3>Memory Diagnostics</h3>
+        <span class="status-pill" [class.error]="memoryValueDrops > 0">
+          {{ memoryValueDrops }} Memory Drops Detected
+        </span>
+        <button mat-icon-button (click)="clearDiagnostics()" matTooltip="Clear diagnostics data">
+          <mat-icon>delete</mat-icon>
+        </button>
       </div>
       
-      <div class="chart-wrapper">
-        <div class="chart-header">
-          <h3>Memory Usage Over Time</h3>
-          <div class="chart-controls">
-            <button mat-icon-button (click)="toggleChartType('memory')" matTooltip="Change Chart Type">
-              <mat-icon>bar_chart</mat-icon>
-            </button>
-            <button mat-icon-button (click)="resetZoom('memory')" matTooltip="Reset Zoom">
-              <mat-icon>zoom_out_map</mat-icon>
-            </button>
+      <div class="diagnostics-content">
+        <div class="memory-stats">
+          <div class="stat-item">
+            <span class="stat-label">Last Memory Value:</span>
+            <span class="stat-value">{{ lastMemoryReceived }} MB</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Memory Points:</span>
+            <span class="stat-value">{{ memoryData.length }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">WebSocket Status:</span>
+            <span class="stat-value" [class.connected]="isConnected">
+              {{ isConnected ? 'Connected' : 'Disconnected' }}
+            </span>
+          </div>
+          <div class="stat-item" *ngIf="hasInvalidMemoryValues">
+            <span class="stat-label">Memory Issues:</span>
+            <span class="stat-value error">
+              {{ memoryValueProblemSolved ? 'Resolved' : 'Detected' }}
+            </span>
           </div>
         </div>
-        <div #memoryChart class="chart"></div>
-      </div>
-    </div>
-    
-    <!-- Detailed Metrics -->
-    <div class="detailed-metrics">
-      <div class="chart-header">
-        <h3>System Performance Metrics</h3>
-      </div>
-      <div class="metrics-grid">
-        <div class="metric-tile" *ngFor="let metric of detailedMetrics">
-          <div class="metric-name">{{ metric.name }}</div>
-          <div class="metric-value" [ngClass]="getMetricStatusClass(metric)">
-            {{ metric.value }} {{ metric.unit }}
+        
+        <div class="event-log">
+          <h4>Recent Events</h4>
+          <div class="log-container">
+            <div *ngFor="let event of diagnosticEvents.slice().reverse().slice(0, 10)" 
+                 class="log-entry" 
+                 [class]="event.type">
+              <span class="timestamp">{{ event.timestamp | date:'HH:mm:ss.SSS' }}</span>
+              <span class="event-type">[{{ event.type }}]</span>
+              <span class="message">{{ event.message }}</span>
+            </div>
           </div>
-          <div class="metric-trend" [ngClass]="metric.trend">
-            <mat-icon>{{ getTrendIcon(metric.trend) }}</mat-icon>
-            <span>{{ metric.changePercent | number:'1.1-1' }}%</span>
+        </div>
+        
+        <!-- Add data source diagnostics section -->
+        <div class="data-sources" *ngIf="missingDataSources && hasKeys(missingDataSources)">
+          <h4>Missing Data Sources</h4>
+          <div class="log-container">
+            <div *ngFor="let source of getObjectEntries(missingDataSources)" class="log-entry data-source">
+              <span class="event-type">[{{ source[0] }}]</span>
+              <span class="message">{{ source[1] }}</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </mat-card-content>
 </mat-card>
+
+<!-- Hidden tooltip element needed for charts -->
+<div class="chart-tooltip" style="display: none;"></div>
+
+<!-- Server Stats Tooltip Container -->
+<ng-template #serverStatsTemplate>
+  <div class="server-stats-container">
+    <h3>Server Performance</h3>
+    <div class="stats-row">
+      <span class="stat-label">Ping:</span>
+      <span class="stat-value">{{ serverPing }}ms</span>
+    </div>
+    <div class="stats-row">
+      <span class="stat-label">Uptime:</span>
+      <span class="stat-value">{{ lastHeartbeat?.uptime || 'N/A' }}</span>
+    </div>
+    <div class="stats-row">
+      <span class="stat-label">Status:</span>
+      <span class="stat-value" [class]="getSystemStatusClass()">
+        {{ lastHeartbeat?.status || 'Unknown' }}
+      </span>
+    </div>
+    <div class="stats-row">
+      <span class="stat-label">OS:</span>
+      <span class="stat-value">{{ lastHeartbeat?.os || 'N/A' }}</span>
+    </div>
+    <div class="stats-row">
+      <span class="stat-label">Version:</span>
+      <span class="stat-value">{{ lastHeartbeat?.version || 'N/A' }}</span>
+    </div>
+  </div>
+</ng-template>
 
 <!-- Validator Card (Original Content) -->
 <mat-card class="validator-card">

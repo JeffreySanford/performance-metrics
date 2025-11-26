@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Chart } from 'chart.js/auto';
 import { LineController, LineElement, PointElement, LinearScale, CategoryScale } from 'chart.js';
@@ -91,15 +91,35 @@ export class NxWelcomeComponent implements OnInit, AfterViewInit {
     }
   };
 
+  constructor(private cdr: ChangeDetectorRef) {} // Add ChangeDetectorRef
+
   ngOnInit() {
     Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale);
   }
 
   ngAfterViewInit() {
+    // Create chart after the view is initialized
+    setTimeout(() => {
+      this.initializeChart();
+      // Mark for check to prevent ExpressionChangedAfterItHasBeenCheckedError
+      this.cdr.detectChanges();
+    });
+  }
+
+  private initializeChart(): void {
+    if (!this.chartCanvas?.nativeElement) return;
+    
     this.chart = new Chart(this.chartCanvas.nativeElement, {
       type: 'line',
       data: this.chartData,
       options: this.chartOptions
     });
   }
-} 
+
+  // Expose a method to update the chart if needed from the component
+  updateChart(): void {
+    if (this.chart) {
+      this.chart.update();
+    }
+  }
+}
