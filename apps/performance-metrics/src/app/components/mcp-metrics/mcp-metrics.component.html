@@ -1,26 +1,168 @@
-<!-- Performance Charts -->
+<!-- Performance Dashboard -->
 <mat-card class="chart-card">
   <mat-card-header>
-    <mat-card-title>Performance Metrics</mat-card-title>
+    <mat-card-title>
+      <div class="header-content">
+        <span class="title-text">Performance Metrics Dashboard</span>
+        <div class="connection-status" [class.connected]="isConnected">
+          <div class="status-indicator"></div>
+          <span>{{ isConnected ? 'Connected' : 'Disconnected' }}</span>
+        </div>
+      </div>
+    </mat-card-title>
   </mat-card-header>
+  
   <mat-card-content>
     <!-- Tooltip Container -->
     <div class="chart-tooltip"></div>
-
-    <div class="chart-container">
-      <h5>CPU Usage (%)</h5>
-      <div #cpuChart class="chart"></div>
+    
+    <!-- System Info Card -->
+    <div class="system-info-card" [innerHTML]="getSystemInfoTemplate()"></div>
+    
+    <!-- Summary Metrics -->
+    <div class="metrics-summary">
+      <div class="metric-card cpu">
+        <div class="metric-icon">
+          <mat-icon>memory</mat-icon>
+        </div>
+        <div class="metric-data">
+          <div class="metric-value">{{ currentCpuUsage | number:'1.0-0' }}%</div>
+          <div class="metric-label">CPU Usage</div>
+        </div>
+        <div class="metric-gauge">
+          <svg viewBox="0 0 120 120" class="gauge-svg">
+            <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
+            <circle class="gauge-fill" cx="60" cy="60" r="50" 
+                    [style.stroke-dasharray]="getCpuDashArray()"></circle>
+            <text class="gauge-text" x="60" y="65" text-anchor="middle">{{ currentCpuUsage | number:'1.0-0' }}%</text>
+          </svg>
+        </div>
+      </div>
+      
+      <div class="metric-card memory">
+        <div class="metric-icon">
+          <mat-icon>sd_card</mat-icon>
+        </div>
+        <div class="metric-data">
+          <div class="metric-value">{{ currentMemoryUsed | number:'1.0-0' }} MB</div>
+          <div class="metric-label">Memory Usage</div>
+          <div class="metric-secondary">of {{ totalMemory | number:'1.0-0' }} MB</div>
+        </div>
+        <div class="metric-gauge">
+          <svg viewBox="0 0 120 120" class="gauge-svg">
+            <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
+            <circle class="gauge-fill" cx="60" cy="60" r="50" 
+                    [style.stroke-dasharray]="getMemoryDashArray()"></circle>
+            <text class="gauge-text" x="60" y="65" text-anchor="middle">{{ memoryPercentage | number:'1.0-0' }}%</text>
+          </svg>
+        </div>
+      </div>
+      
+      <div class="metric-card response">
+        <div class="metric-icon">
+          <mat-icon>speed</mat-icon>
+        </div>
+        <div class="metric-data">
+          <div class="metric-value">{{ avgResponseTime | number:'1.0-2' }} ms</div>
+          <div class="metric-label">Avg Response</div>
+        </div>
+        <div class="sparkline" #responseSparkline></div>
+      </div>
+      
+      <div class="metric-card requests">
+        <div class="metric-icon">
+          <mat-icon>trending_up</mat-icon>
+        </div>
+        <div class="metric-data">
+          <div class="metric-value">{{ requestsPerSecond }}</div>
+          <div class="metric-label">Req/Sec</div>
+        </div>
+        <div class="sparkline" #requestsSparkline></div>
+      </div>
     </div>
-    <div class="chart-container">
-      <h5>Memory Usage (MB)</h5>
-      <div #memoryChart class="chart"></div>
+    
+    <!-- Combined Chart -->
+    <div class="chart-wrapper combined-chart-container">
+      <div class="chart-header">
+        <h3>Combined Metrics</h3>
+        <div class="chart-controls">
+          <button mat-icon-button matTooltip="Reset View">
+            <mat-icon>zoom_out_map</mat-icon>
+          </button>
+        </div>
+      </div>
+      <div #combinedChart class="chart combined-chart"></div>
+      
+      <!-- Metric Filters -->
+      <div class="metrics-filter">
+        <div class="filter-chips">
+          <mat-chip-option 
+            *ngFor="let filter of metricFilters" 
+            [selected]="filter.active"
+            [color]="filter.active ? 'primary' : undefined"
+            (selectionChange)="toggleMetricFilter(filter.id)">
+            <span class="metric-indicator" [style.backgroundColor]="filter.color"></span>
+            {{ filter.name }}
+          </mat-chip-option>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Charts -->
+    <div class="charts-container">
+      <div class="chart-wrapper">
+        <div class="chart-header">
+          <h3>CPU Usage Over Time</h3>
+          <div class="chart-controls">
+            <button mat-icon-button (click)="toggleChartType('cpu')" matTooltip="Change Chart Type">
+              <mat-icon>bar_chart</mat-icon>
+            </button>
+            <button mat-icon-button (click)="resetZoom('cpu')" matTooltip="Reset Zoom">
+              <mat-icon>zoom_out_map</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div #cpuChart class="chart"></div>
+      </div>
+      
+      <div class="chart-wrapper">
+        <div class="chart-header">
+          <h3>Memory Usage Over Time</h3>
+          <div class="chart-controls">
+            <button mat-icon-button (click)="toggleChartType('memory')" matTooltip="Change Chart Type">
+              <mat-icon>bar_chart</mat-icon>
+            </button>
+            <button mat-icon-button (click)="resetZoom('memory')" matTooltip="Reset Zoom">
+              <mat-icon>zoom_out_map</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div #memoryChart class="chart"></div>
+      </div>
+    </div>
+    
+    <!-- Detailed Metrics -->
+    <div class="detailed-metrics">
+      <div class="chart-header">
+        <h3>System Performance Metrics</h3>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-tile" *ngFor="let metric of detailedMetrics">
+          <div class="metric-name">{{ metric.name }}</div>
+          <div class="metric-value" [ngClass]="getMetricStatusClass(metric)">
+            {{ metric.value }} {{ metric.unit }}
+          </div>
+          <div class="metric-trend" [ngClass]="metric.trend">
+            <mat-icon>{{ getTrendIcon(metric.trend) }}</mat-icon>
+            <span>{{ metric.changePercent | number:'1.1-1' }}%</span>
+          </div>
+        </div>
+      </div>
     </div>
   </mat-card-content>
 </mat-card>
 
-<!-- Live Updates -->
-<!-- ... rest of the template ... -->
-
+<!-- Validator Card (Original Content) -->
 <mat-card class="validator-card">
   <mat-card-header>
     <mat-card-title>MCP Workspace Standards Validator</mat-card-title>
